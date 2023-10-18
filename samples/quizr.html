@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../dist/css/jsvectormap.css" />
+    <script src="../dist/js/jsvectormap.js"></script>
+    <script src="../src/maps/world.js"></script>
+
+    <div id="map" style="width: 100vw; height: 100vh"></div>
+
+    <script defer>
+      let test;
+      let labelGroup;
+
+      const map = new jsVectorMap({
+        selector: "#map",
+        map: "world",
+        onRegionClick: function (event, code) {
+          var name = code;
+          map.regions[code].element.shape.style.current.fill = "#ff404c";
+          map.regions[code].element.shape.setStyle();
+
+          let { x, y, width, height } =
+            map.regions[code].element.shape.getBBox();
+          let cx = width / 2 + x;
+          let cy = height / 2 + y;
+
+          map.canvas.createText(
+            {
+              text: "labelText",
+              dataIndex: 1,
+              x: cx * map.scale + map.transX * map.scale,
+              y: cy * map.scale + map.transX * map.scale,
+            },
+            map.params.markerLabelStyle,
+            labelGroup
+          );
+        },
+        onLoaded: function (map) {
+          labelGroup = map.canvas.createGroup("jvm-labels-group");
+
+          test = map.canvas.createText(
+            {
+              text: "labelText",
+              dataIndex: 1,
+              x: 100 * map.scale + map.transX * map.scale,
+              y: 100 * map.scale + map.transY * map.scale,
+              dy: "0.6ex",
+            },
+            map.params.markerLabelStyle,
+            labelGroup
+          );
+        },
+        onViewportChange: function (scale, transX, transY) {
+          test.set({
+            x: 100 * scale + transX * scale,
+            y: 100 * scale + transY * scale,
+          });
+        },
+      });
+    </script>
+  </body>
+</html>
